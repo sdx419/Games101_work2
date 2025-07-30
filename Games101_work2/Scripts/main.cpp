@@ -32,7 +32,43 @@ Eigen::Matrix4f get_model_matrix(float rotation_angle)
 Eigen::Matrix4f get_projection_matrix(float eye_fov, float aspect_ratio, float zNear, float zFar)
 {
     // TODO: Copy-paste your implementation from the previous assignment.
-    Eigen::Matrix4f projection;
+    // Students will implement this function
+
+    Eigen::Matrix4f projection = Eigen::Matrix4f::Identity();
+
+    // TODO: Implement this function
+    // Create the projection matrix for the given parameters.
+    // Then return it.
+
+    // 传的参数是近平面和远平面的绝对距离，但是摄像机看向-z轴，所以根据矩阵定义，需要将其转为相反数
+    float n = -zNear;
+    float f = -zFar;
+    float A = n + f;
+    float B = -n * f;
+
+    Matrix4f perspective;
+
+    perspective << n, 0, 0, 0, 0, n, 0, 0, 0, 0, A, B, 0, 0, 1, 0;
+    //projection = perspective * projection;
+
+    float top = abs(zNear) * tan(eye_fov / 2 * MY_PI / 180.0);
+    float bottom = -top;
+
+    float right = top * aspect_ratio;
+    float left = -right;
+
+    Matrix4f scale;
+
+    scale << 2.0 / (right - left), 0, 0, 0, 0, 2.0 / (top - bottom), 0, 0,
+        0, 0, 2.0 / abs(zNear - zFar), 0, 0, 0, 0, 1;
+
+    Matrix4f translate;
+    translate << 1, 0, 0, -(right + left) / 2.0, 0, 1, 0, -(top + bottom) / 2.0,
+        0, 0, 1, -(n + f) / 2.0, 0, 0, 0, 1;
+
+    projection = scale * translate * perspective * projection;
+
+    return projection;
 
     return projection;
 }
@@ -87,7 +123,7 @@ int main(int argc, const char** argv)
     int key = 0;
     int frame_count = 0;
 
-    if (command_line)
+    if (true)
     {
         r.clear(rst::Buffers::Color | rst::Buffers::Depth);
 

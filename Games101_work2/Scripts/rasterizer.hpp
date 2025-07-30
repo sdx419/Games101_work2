@@ -79,6 +79,8 @@ namespace rst
 
         void rasterize_triangle(const Triangle& t);
 
+        void declineSample();
+
         // VERTEX SHADER -> MVP -> Clipping -> /.W -> VIEWPORT -> DRAWLINE/DRAWTRI -> FRAGSHADER
 
     private:
@@ -94,6 +96,7 @@ namespace rst
 
         std::vector<float> depth_buf;
         int get_index(int x, int y);
+        std::map<int, Vector3f> pixelColor;
 
         int width, height;
 
