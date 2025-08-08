@@ -31,9 +31,6 @@ Eigen::Matrix4f get_model_matrix(float rotation_angle)
 
 Eigen::Matrix4f get_projection_matrix(float eye_fov, float aspect_ratio, float zNear, float zFar)
 {
-    // TODO: Copy-paste your implementation from the previous assignment.
-    // Students will implement this function
-
     Eigen::Matrix4f projection = Eigen::Matrix4f::Identity();
 
     // TODO: Implement this function
@@ -60,6 +57,10 @@ Eigen::Matrix4f get_projection_matrix(float eye_fov, float aspect_ratio, float z
 
     Matrix4f scale;
 
+    // 这里在正交投影变换时，在z方向的缩放系数为负数，
+    // 这是为了让近平面投影到到(1,1,1)点所在的平面，让远平面投影到(-1,-1,-1)所在的平面
+    // 其目的是为了让深度值越大，表示离摄像机越远，进而跟作业要求保持一致。
+    // 所以在rst::rasterizer::rasterize_triangle(const Triangle& t)方法中，可以看到深度值小于缓存值，才会设置颜色
     scale << 2.0 / abs(right - left), 0, 0, 0, 0, 2.0 / abs(top - bottom), 0, 0,
         0, 0, -2.0 / abs(zNear - zFar), 0, 0, 0, 0, 1;
 
