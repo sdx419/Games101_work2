@@ -41,6 +41,7 @@ Eigen::Matrix4f get_projection_matrix(float eye_fov, float aspect_ratio, float z
     // Then return it.
 
     // 传的参数是近平面和远平面的绝对距离，但是摄像机看向-z轴，所以根据矩阵定义，需要将其转为相反数
+    // 这里的n和f实际上表示的是，将摄像机平移到原点并且看向-z轴方向时，近平面和远平面对应的z坐标，均为负数
     float n = -zNear;
     float f = -zFar;
     float A = n + f;
@@ -59,16 +60,14 @@ Eigen::Matrix4f get_projection_matrix(float eye_fov, float aspect_ratio, float z
 
     Matrix4f scale;
 
-    scale << 2.0 / (right - left), 0, 0, 0, 0, 2.0 / (top - bottom), 0, 0,
-        0, 0, 2.0 / abs(zNear - zFar), 0, 0, 0, 0, 1;
+    scale << 2.0 / abs(right - left), 0, 0, 0, 0, 2.0 / abs(top - bottom), 0, 0,
+        0, 0, -2.0 / abs(zNear - zFar), 0, 0, 0, 0, 1;
 
     Matrix4f translate;
     translate << 1, 0, 0, -(right + left) / 2.0, 0, 1, 0, -(top + bottom) / 2.0,
         0, 0, 1, -(n + f) / 2.0, 0, 0, 0, 1;
 
     projection = scale * translate * perspective * projection;
-
-    return projection;
 
     return projection;
 }
@@ -123,7 +122,7 @@ int main(int argc, const char** argv)
     int key = 0;
     int frame_count = 0;
 
-    if (true)
+    if (command_line)
     {
         r.clear(rst::Buffers::Color | rst::Buffers::Depth);
 
